@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    ssf (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    google-protobuf (3.3.0)
+    power_assert (1.0.2)
+    test-unit (3.2.4)
+      power_assert
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  google-protobuf
+  ssf!
+  test-unit
+
+BUNDLED WITH
+   1.15.1
