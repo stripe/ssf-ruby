@@ -8,6 +8,7 @@ GEM
   specs:
     google-protobuf (3.3.0)
     power_assert (1.0.2)
+    rake (12.0.0)
     test-unit (3.2.4)
       power_assert
 
@@ -16,6 +17,7 @@ PLATFORMS
 
 DEPENDENCIES
   google-protobuf
+  rake
   ssf!
   test-unit
 

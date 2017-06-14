@@ -5,5 +5,6 @@ gemspec
 
 gem 'google-protobuf'
 gem 'test-unit'
+gem 'rake'
 
 
