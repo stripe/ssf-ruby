@@ -23,9 +23,13 @@ module SSFTest
       assert(s.id == s2.id)
     end
 
-
     def test_client_send
-      SSF
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+
+      c = SSF::Client.new(host: '127.0.01', port: '8128')
+      c.send_to_socket(Ssf::SSFSpan.encode(s))
     end
   end
 end
