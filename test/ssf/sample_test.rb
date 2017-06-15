@@ -1,11 +1,10 @@
 require 'test/unit'
-require 'ssf/sample_pb.rb'
+require 'ssf'
 
 module SSFTest
-  class ChargeTest < Test::Unit::TestCase
+  class SSFClientTest < Test::Unit::TestCase
 
     def test_create_ssf
-      print("asdasdfasd")
       s = Ssf::SSFSpan.new({
         id: 123456,
       })
@@ -22,6 +21,11 @@ module SSFTest
       s2 = Ssf::SSFSpan.decode(message)
 
       assert(s.id == s2.id)
+    end
+
+
+    def test_client_send
+      SSF
     end
   end
 end

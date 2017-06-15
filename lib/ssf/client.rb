@@ -21,7 +21,7 @@ module SSF
     end
 
     def send_to_socket(message)
-      @socket.send(message) 
+      @socket.send(message)
     end
   end
 end
