@@ -35,7 +35,7 @@ module SSF
       operation = operation
       tags = tags
 
-      Ssf::SSFSpan.new({
+      span = Ssf::SSFSpan.new({
         id: span_id,
         trace_id: trace_id,
         start_timestamp: start,
@@ -43,6 +43,8 @@ module SSF
         operation: operation,
         tags: tags,
       })
+      span.client = self
+      span
     end
   end
 end

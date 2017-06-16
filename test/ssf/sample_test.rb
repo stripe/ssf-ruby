@@ -40,10 +40,6 @@ module SSFTest
 
       assert(span.end_timestamp > span.start_timestamp)
       assert(span.service == 'test-srv')
-
-      packet = Ssf::SSFSpan.encode(span)
-
-      c.send_to_socket(packet)
     end
   end
 end
