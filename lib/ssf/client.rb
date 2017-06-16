@@ -9,8 +9,11 @@ module SSF
     attr_reader :host
     attr_reader :port
 
-    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, max_buffer_size: 50)
+    attr_reader :service
+
+    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: '', max_buffer_size: 50)
       @host, @port = host, port
+      @service = service
       @socket = connect_to_socket(host, port)
     end
 
@@ -27,8 +30,8 @@ module SSF
     def start_span(service: '', operation: '', tags: {})
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = span_id
-      start = Time.now.to_i * 1e6
-      service = service
+      start = Time.now.to_f * 1_000_000_000
+      service = @service
       operation = operation
       tags = tags
 

@@ -34,20 +34,16 @@ module SSFTest
     end
 
     def test_full_client_send
-      c = SSF::Client.new(host: '127.0.01', port: '8128')
-      span = c.start_span(service: 'test-srv', operation: 'run test')
-      span.end_timestamp = (Time.now.to_i + 1) * 1e6
+      c = SSF::Client.new(host: '127.0.01', port: '8128', service: 'test-srv')
+      span = c.start_span(operation: 'run test')
+      span.finish
 
       assert(span.end_timestamp > span.start_timestamp)
+      assert(span.service == 'test-srv')
 
       packet = Ssf::SSFSpan.encode(span)
 
-      File.open('test.pb', 'w') do |file|
-        file.write(packet)
-      end
-
       c.send_to_socket(packet)
-      puts("encoded ", packet)
     end
   end
 end
