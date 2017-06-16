@@ -23,5 +23,23 @@ module SSF
     def send_to_socket(message)
       @socket.send(message, 0)
     end
+
+    def start_span(service: '', operation: '', tags: {})
+      span_id = SecureRandom.random_number(2**32 - 1)
+      trace_id = span_id
+      start = Time.now.to_i * 1e6
+      service = service
+      operation = operation
+      tags = tags
+
+      Ssf::SSFSpan.new({
+        id: span_id,
+        trace_id: trace_id,
+        start_timestamp: start,
+        service: service,
+        operation: operation,
+        tags: tags,
+      })
+    end
   end
 end
