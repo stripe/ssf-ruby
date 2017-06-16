@@ -27,7 +27,7 @@ module SSF
       @socket.send(message, 0)
     end
 
-    def start_span(service: '', operation: '', tags: {})
+    def new_root_span(operation: '', tags: {})
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = span_id
       start = Time.now.to_f * 1_000_000_000
@@ -44,6 +44,29 @@ module SSF
         tags: tags,
       })
       span.client = self
+      span
+    end
+
+    def start_span(operation: '', tags: {}, parent: -1)
+      span_id = SecureRandom.random_number(2**32 - 1)
+      trace_id = span_id
+      start = Time.now.to_f * 1_000_000_000
+      service = @service
+      operation = operation
+      tags = tags
+
+      span = Ssf::SSFSpan.new({
+        id: span_id,
+        trace_id: trace_id,
+        start_timestamp: start,
+        service: service,
+        operation: operation,
+        tags: tags,
+      })
+      span.client = self
+      if parent != -1
+        span.parent_id = parent
+      end
       span
     end
   end
