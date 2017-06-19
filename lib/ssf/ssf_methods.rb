@@ -27,6 +27,7 @@ module Ssf
       start = Time.now.to_f * 1_000_000_000
       service = self.service
       operation = operation
+      # TODO: Tag inheritance
       # puts self.tags
       # keys = (tags.keys & self.tags.keys)
       # tags = Hash[keys.zip(self.tags.values_at(*keys))]
