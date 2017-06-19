@@ -27,11 +27,15 @@ module Ssf
       start = Time.now.to_f * 1_000_000_000
       service = self.service
       operation = operation
-      # TODO: Tag inheritance
-      # puts self.tags
-      # keys = (tags.keys & self.tags.keys)
-      # tags = Hash[keys.zip(self.tags.values_at(*keys))]
-      tags = tags
+      new_tags = {}
+      self.tags.each do |key, value|
+        if key != 'name'
+          new_tags[key] = value
+        end
+      end
+      tags.each do |key, value|
+        new_tags[key] = value
+      end
       parent = self.id
 
       span = Ssf::SSFSpan.new({
@@ -40,7 +44,7 @@ module Ssf
         start_timestamp: start,
         service: service,
         operation: operation,
-        tags: tags,
+        tags: new_tags,
         parent_id: parent,
       })
       span.client = self.client

@@ -61,6 +61,12 @@ module SSFTest
       child1.finish
       span.finish
 
+      span.tags.each do |key, value|
+        if key != 'name'
+          assert(child1.tags[key] != nil)
+        end
+      end
+
       assert(child1.parent_id == span.id)
       assert(child1.trace_id == span.trace_id)
     end
