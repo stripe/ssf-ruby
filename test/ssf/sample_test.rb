@@ -36,7 +36,7 @@ module SSFTest
     def test_full_client_send
       c = SSF::Client.new(host: '127.0.01', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test')
-      span.finish
+      span.finish()
 
       assert(span.end_timestamp > span.start_timestamp)
       assert_equal(name, 'test_full_client_send(SSFTest::SSFClientTest)')
@@ -47,7 +47,7 @@ module SSFTest
       c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test', parent: 10)
 
-      span.finish
+      span.finish()
 
       assert(span.parent_id == 10)
     end
@@ -58,8 +58,8 @@ module SSFTest
 
       child1 = span.child_span(operation: 'op2', tags: {'tag2' => 'value2'})
 
-      child1.finish
-      span.finish
+      child1.finish()
+      span.finish()
 
       span.tags.each do |key, value|
         if key != 'name'
