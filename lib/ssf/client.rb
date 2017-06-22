@@ -69,5 +69,26 @@ module SSF
       end
       span
     end
+
+    def span_from_context(operation: '', tags: {}, trace_id: -1, parent_id: -1)
+      span_id = SecureRandom.random_number(2**32 - 1)
+      trace_id = trace_id
+      start = Time.now.to_f * 1_000_000_000
+      service = @service
+      operation = operation
+      tags = tags
+
+      span = Ssf::SSFSpan.new({
+        id: span_id,
+        trace_id: trace_id,
+        start_timestamp: start,
+        service: service,
+        operation: operation,
+        tags: tags,
+        parent_id: parent_id,
+      })
+      span.client = self
+      span
+    end
   end
 end

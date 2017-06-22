@@ -70,5 +70,14 @@ module SSFTest
       assert(child1.parent_id == span.id)
       assert(child1.trace_id == span.trace_id)
     end
+
+    def test_from_context
+      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      span = c.span_from_context(operation: 'op1', tags: {'tag1' => 'value1'},
+        trace_id: 5, parent_id: 10)
+
+      assert(span.trace_id == 5)
+      assert(span.parent_id == 10)
+    end
   end
 end
