@@ -1,6 +1,5 @@
 module Ssf
   class SSFSpan
-
     attr_accessor :client
 
     def finish(time: nil)
@@ -45,7 +44,7 @@ module Ssf
         service: service,
         operation: operation,
         tags: new_tags,
-        parent_id: parent,
+        parent_id: parent
       })
       span.client = self.client
       span

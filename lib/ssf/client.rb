@@ -2,8 +2,7 @@ require 'socket'
 
 module SSF
   class Client
-
-    DEFAULT_HOST = '127.0.0.1'
+    DEFAULT_HOST = '127.0.0.1'.freeze
     DEFAULT_PORT = 8128
 
     attr_reader :host
@@ -12,7 +11,8 @@ module SSF
     attr_reader :service
 
     def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: '', max_buffer_size: 50)
-      @host, @port = host, port
+      @host = host
+      @port = port
       @service = service
       @socket = connect_to_socket(host, port)
     end
@@ -41,7 +41,7 @@ module SSF
         start_timestamp: start,
         service: service,
         operation: operation,
-        tags: tags,
+        tags: tags
       })
       span.client = self
       span
@@ -61,7 +61,7 @@ module SSF
         start_timestamp: start,
         service: service,
         operation: operation,
-        tags: tags,
+        tags: tags
       })
       span.client = self
       if parent != -1
@@ -87,7 +87,7 @@ module SSF
         service: service,
         operation: operation,
         tags: tags,
-        parent_id: parent_id,
+        parent_id: parent_id
       })
       span.client = self
       span
