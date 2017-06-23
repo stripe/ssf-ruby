@@ -29,12 +29,12 @@ module SSFTest
         id: 123456,
       })
 
-      c = SSF::Client.new(host: '127.0.01', port: '8128')
+      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
       c.send_to_socket(Ssf::SSFSpan.encode(s))
     end
 
     def test_full_client_send
-      c = SSF::Client.new(host: '127.0.01', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test')
       span.finish()
 
@@ -44,7 +44,7 @@ module SSFTest
     end
 
     def test_parent_id
-      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test', parent: 10)
 
       span.finish()
@@ -53,7 +53,7 @@ module SSFTest
     end
 
     def test_child_span
-      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.new_root_span(operation: 'op1', tags: {'tag1' => 'value1'})
 
       child1 = span.child_span(operation: 'op2', tags: {'tag2' => 'value2'})
@@ -72,7 +72,7 @@ module SSFTest
     end
 
     def test_from_context
-      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.span_from_context(operation: 'op1', tags: {'tag1' => 'value1'},
         trace_id: 5, parent_id: 10)
 
@@ -84,7 +84,7 @@ module SSFTest
     def test_start_span_context_tags_nonstrings
       # we should be able to handle passing in keys and values for
       # 'tags' that are not strings without throwing an exception
-      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
 
       tags = {
         :foo => :bar,
@@ -103,7 +103,7 @@ module SSFTest
     def test_child_span_tags_nonstrings
       # we should be able to handle passing in keys and values for
       # 'tags' that are not strings without throwing an exception
-      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
 
       tags = {
         :foo => :bar,
