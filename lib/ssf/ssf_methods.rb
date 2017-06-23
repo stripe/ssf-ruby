@@ -33,9 +33,10 @@ module Ssf
           new_tags[key] = value
         end
       end
-      tags.each do |key, value|
-        new_tags[key] = value
-      end
+
+      new_tags = Ssf:: SSFSpan.clean_tags(tags.merge(new_tags))
+      puts("tags are #{new_tags}")
+
       parent = self.id
 
       span = Ssf::SSFSpan.new({
@@ -53,6 +54,17 @@ module Ssf
 
     def set_name(name)
       self.tags['name'] = name
+    end
+
+
+    def self.clean_tags(tags)
+      tmp = {}
+      tags.map do |k, v|
+        if v && k != 'name'
+          tmp[k.to_s] = v.to_s
+        end
+      end
+      tmp
     end
   end
 end

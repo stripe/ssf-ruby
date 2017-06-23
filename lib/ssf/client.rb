@@ -78,6 +78,8 @@ module SSF
       operation = operation
       tags = tags
 
+      tags = Ssf::SSFSpan.clean_tags(tags)
+
       span = Ssf::SSFSpan.new({
         id: span_id,
         trace_id: trace_id,

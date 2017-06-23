@@ -63,7 +63,7 @@ module SSFTest
 
       span.tags.each do |key, value|
         if key != 'name'
-          assert(child1.tags[key] != nil)
+          assert(child1.tags[key], "expected to find non-nil value for #{key} in")
         end
       end
 
@@ -78,6 +78,46 @@ module SSFTest
 
       assert(span.trace_id == 5)
       assert(span.parent_id == 10)
+    end
+
+
+    def test_start_span_context_tags_nonstrings
+      # we should be able to handle passing in keys and values for
+      # 'tags' that are not strings without throwing an exception
+      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+
+      tags = {
+        :foo => :bar,
+        'something' => nil,
+        'a_number' => 5,
+      }
+
+      span = c.span_from_context(operation: 'op1', tags: tags,
+        trace_id: 5, parent_id: 10)
+
+      assert_equal(span.tags["foo"], "bar")
+      assert_equal(span.tags["something"], nil)
+      assert_equal(span.tags["a_number"], "5")
+    end
+
+    def test_child_span_tags_nonstrings
+      # we should be able to handle passing in keys and values for
+      # 'tags' that are not strings without throwing an exception
+      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+
+      tags = {
+        :foo => :bar,
+        'something' => nil,
+        'a_number' => 5,
+      }
+
+      span = c.span_from_context(operation: 'op1', tags: tags,
+        trace_id: 5, parent_id: 10)
+      span = span.child_span(operation: 'op2', tags: tags)
+
+      assert_equal(span.tags["foo"], "bar")
+      assert_equal(span.tags["something"], nil)
+      assert_equal(span.tags["a_number"], "5")
     end
   end
 end
