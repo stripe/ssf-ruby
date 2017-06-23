@@ -35,7 +35,6 @@ module Ssf
       end
 
       new_tags = Ssf:: SSFSpan.clean_tags(tags.merge(new_tags))
-      puts("tags are #{new_tags}")
 
       parent = self.id
 
