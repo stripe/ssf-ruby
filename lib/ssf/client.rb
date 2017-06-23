@@ -47,7 +47,7 @@ module SSF
       span
     end
 
-    def start_span(operation: '', tags: {}, parent: -1)
+    def start_span(operation: '', tags: {})
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = span_id
       start = Time.now.to_f * 1_000_000_000
@@ -64,9 +64,6 @@ module SSF
         tags: tags
       })
       span.client = self
-      if parent != -1
-        span.parent_id = parent
-      end
       span
     end
 

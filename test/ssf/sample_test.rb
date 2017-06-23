@@ -42,15 +42,6 @@ module SSFTest
       assert_equal(span.service, 'test-srv')
     end
 
-    def test_parent_id
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span(operation: 'run test', parent: 10)
-
-      span.finish()
-
-      assert(span.parent_id == 10)
-    end
-
     def test_child_span
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.new_root_span(operation: 'op1', tags: {'tag1' => 'value1'})
