@@ -27,7 +27,6 @@ module SSF
       @socket.send(message, 0)
     end
 
-
     def new_span(operation: '', tags: {}, trace_id: nil, parent_id: nil)
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
