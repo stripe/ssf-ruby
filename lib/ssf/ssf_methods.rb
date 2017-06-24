@@ -1,6 +1,9 @@
+require 'socket'
+
 module Ssf
   class SSFSpan
     attr_accessor :client
+    attr_accessor :socket
 
     def finish(time: nil)
       unless time
@@ -17,6 +20,7 @@ module Ssf
       packet = Ssf::SSFSpan.encode(self)
 
       @client.send_to_socket(packet)
+      # @socket.send(packet, 0)
       self
     end
 
@@ -33,7 +37,7 @@ module Ssf
         end
       end
 
-      new_tags = Ssf:: SSFSpan.clean_tags(tags.merge(new_tags))
+      new_tags = Ssf::SSFSpan.clean_tags(tags.merge(new_tags))
 
       parent = self.id
 
@@ -47,6 +51,7 @@ module Ssf
         parent_id: parent
       })
       span.client = self.client
+      span.socket = @socket
       span
     end
 

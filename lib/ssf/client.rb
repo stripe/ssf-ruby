@@ -27,66 +27,24 @@ module SSF
       @socket.send(message, 0)
     end
 
-    def new_root_span(operation: '', tags: {})
-      span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = span_id
-      start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
 
+    def new_span(operation: '', tags: {}, trace_id: nil, parent_id: nil)
+      span_id = SecureRandom.random_number(2**32 - 1)
+      start = Time.now.to_f * 1_000_000_000
       span = Ssf::SSFSpan.new({
         id: span_id,
-        trace_id: trace_id,
+        trace_id: span_id, # root span: trace_id == span_id
         start_timestamp: start,
-        service: service,
+        service: @service,
         operation: operation,
-        tags: tags
-      })
+        tags: Ssf::SSFSpan.clean_tags(tags)
+        })
       span.client = self
-      span
-    end
-
-    def start_span(operation: '', tags: {})
-      span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = span_id
-      start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
-
-      span = Ssf::SSFSpan.new({
-        id: span_id,
-        trace_id: trace_id,
-        start_timestamp: start,
-        service: service,
-        operation: operation,
-        tags: tags
-      })
-      span.client = self
-      span
-    end
-
-    def span_from_context(operation: '', tags: {}, trace_id: -1, parent_id: -1)
-      span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = trace_id
-      start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
-
-      tags = Ssf::SSFSpan.clean_tags(tags)
-
-      span = Ssf::SSFSpan.new({
-        id: span_id,
-        trace_id: trace_id,
-        start_timestamp: start,
-        service: service,
-        operation: operation,
-        tags: tags,
-        parent_id: parent_id
-      })
-      span.client = self
+      span.socket = @socket
+      if trace_id != nil && parent_id != nil
+        span.parent_id = parent_id
+        span.trace_id = trace_id
+      end
       span
     end
   end
