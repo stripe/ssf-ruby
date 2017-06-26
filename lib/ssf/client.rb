@@ -40,8 +40,12 @@ module SSF
         })
       span.client = self
       span.socket = @socket
-      if trace_id != nil then span.trace_id = trace_id end
-      if parent_id != nil then span.parent_id = parent_id end
+      if trace_id != nil
+        span.trace_id = trace_id
+      end
+      if parent_id != nil
+        span.parent_id = parent_id
+      end
       span
     end
   end
