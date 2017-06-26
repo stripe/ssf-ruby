@@ -34,7 +34,7 @@ module SSFTest
 
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.new_span(operation: 'run test')
+      span = c.start_span(operation: 'run test')
       span.finish
 
       assert(span.end_timestamp > span.start_timestamp)
@@ -44,7 +44,7 @@ module SSFTest
 
     def test_child_span
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.new_span(operation: 'op1', tags: {'tag1' => 'value1'})
+      span = c.start_span(operation: 'op1', tags: {'tag1' => 'value1'})
 
       child1 = span.child_span(operation: 'op2', tags: {'tag2' => 'value2'})
 
@@ -63,7 +63,7 @@ module SSFTest
 
     def test_from_context
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.new_span(operation: 'op1',
+      span = c.start_span(operation: 'op1',
                                 tags: { 'tag1' => 'value1' },
                                 trace_id: 5,
                                 parent_id: 10)
@@ -84,7 +84,7 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.new_span(operation: 'op1',
+      span = c.start_span(operation: 'op1',
                                 tags: tags,
                                 trace_id: 5,
                                 parent_id: 10)
@@ -105,7 +105,7 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.new_span(operation: 'op1', tags: tags,
+      span = c.start_span(operation: 'op1', tags: tags,
                 trace_id: 5, parent_id: 10)
       span = span.child_span(operation: 'op2', tags: tags)
 
