@@ -30,9 +30,10 @@ module SSF
     def start_span(operation: '', tags: {}, trace_id: nil, parent_id: nil)
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
+      # the trace_id is set to span_id for root spans
       span = Ssf::SSFSpan.new({
         id: span_id,
-        trace_id: span_id, # root span: trace_id == span_id
+        trace_id: span_id,
         start_timestamp: start,
         service: @service,
         operation: operation,
