@@ -40,7 +40,6 @@ module SSF
         tags: Ssf::SSFSpan.clean_tags(tags)
         })
       span.client = self
-      span.socket = @socket
       if trace_id != nil
         span.trace_id = trace_id
       end
