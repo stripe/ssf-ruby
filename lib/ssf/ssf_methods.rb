@@ -23,6 +23,7 @@ module Ssf
     end
 
     def child_span(operation: '', tags: {})
+      puts "WARN: this method is deprecated."
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = self.trace_id
       start = Time.now.to_f * 1_000_000_000

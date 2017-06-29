@@ -46,7 +46,7 @@ module SSFTest
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'op1', tags: {'tag1' => 'value1'})
 
-      child1 = span.child_span(operation: 'op2', tags: {'tag2' => 'value2'})
+      child1 = c.start_span(operation: 'op2', tags: {'tag2' => 'value2'}, parent: span)
 
       child1.finish
       span.finish
@@ -63,7 +63,7 @@ module SSFTest
 
     def test_from_context
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span(operation: 'op1',
+      span = c.start_span_from_context(operation: 'op1',
                                 tags: { 'tag1' => 'value1' },
                                 trace_id: 5,
                                 parent_id: 10)
@@ -85,9 +85,7 @@ module SSFTest
       }
 
       span = c.start_span(operation: 'op1',
-                                tags: tags,
-                                trace_id: 5,
-                                parent_id: 10)
+                                tags: tags)
 
       assert_equal(span.tags['foo'], 'bar')
       assert_equal(span.tags['something'], nil)
@@ -105,9 +103,8 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.start_span(operation: 'op1', tags: tags,
-                trace_id: 5, parent_id: 10)
-      span = span.child_span(operation: 'op2', tags: tags)
+      span = c.start_span(operation: 'op1', tags: tags)
+      span = c.start_span(operation: 'op2', tags: tags, parent: span)
 
       assert_equal(span.tags["foo"], "bar")
       assert_equal(span.tags["something"], nil)
