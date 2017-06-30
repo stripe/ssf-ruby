@@ -1,6 +1,7 @@
+require 'socket'
+
 module Ssf
   class SSFSpan
-
     attr_accessor :client
 
     def finish(time: nil)
@@ -22,6 +23,7 @@ module Ssf
     end
 
     def child_span(operation: '', tags: {})
+      puts "WARN: this method is deprecated."
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = self.trace_id
       start = Time.now.to_f * 1_000_000_000
@@ -34,7 +36,7 @@ module Ssf
         end
       end
 
-      new_tags = Ssf:: SSFSpan.clean_tags(tags.merge(new_tags))
+      new_tags = Ssf::SSFSpan.clean_tags(tags.merge(new_tags))
 
       parent = self.id
 
@@ -45,7 +47,7 @@ module Ssf
         service: service,
         operation: operation,
         tags: new_tags,
-        parent_id: parent,
+        parent_id: parent
       })
       span.client = self.client
       span

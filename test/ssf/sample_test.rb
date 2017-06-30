@@ -4,7 +4,6 @@ require 'securerandom'
 
 module SSFTest
   class SSFClientTest < Test::Unit::TestCase
-
     def test_create_ssf
       s = Ssf::SSFSpan.new({
         id: 123456,
@@ -36,34 +35,25 @@ module SSFTest
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test')
-      span.finish()
+      span.finish
 
       assert(span.end_timestamp > span.start_timestamp)
       assert_equal(name, 'test_full_client_send(SSFTest::SSFClientTest)')
       assert_equal(span.service, 'test-srv')
     end
 
-    def test_parent_id
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span(operation: 'run test', parent: 10)
-
-      span.finish()
-
-      assert(span.parent_id == 10)
-    end
-
     def test_child_span
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.new_root_span(operation: 'op1', tags: {'tag1' => 'value1'})
+      span = c.start_span(operation: 'op1', tags: {'tag1' => 'value1'})
 
-      child1 = span.child_span(operation: 'op2', tags: {'tag2' => 'value2'})
+      child1 = c.start_span(operation: 'op2', tags: {'tag2' => 'value2'}, parent: span)
 
-      child1.finish()
-      span.finish()
+      child1.finish
+      span.finish
 
       span.tags.each do |key, value|
         if key != 'name'
-          assert(child1.tags[key], "expected to find non-nil value for #{key} in")
+          assert(child1.tags[key], "expected to find non-nil value for #{key}")
         end
       end
 
@@ -73,8 +63,10 @@ module SSFTest
 
     def test_from_context
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.span_from_context(operation: 'op1', tags: {'tag1' => 'value1'},
-        trace_id: 5, parent_id: 10)
+      span = c.start_span_from_context(operation: 'op1',
+                                tags: { 'tag1' => 'value1' },
+                                trace_id: 5,
+                                parent_id: 10)
 
       assert(span.trace_id == 5)
       assert(span.parent_id == 10)
@@ -92,12 +84,12 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.span_from_context(operation: 'op1', tags: tags,
-        trace_id: 5, parent_id: 10)
+      span = c.start_span(operation: 'op1',
+                                tags: tags)
 
-      assert_equal(span.tags["foo"], "bar")
-      assert_equal(span.tags["something"], nil)
-      assert_equal(span.tags["a_number"], "5")
+      assert_equal(span.tags['foo'], 'bar')
+      assert_equal(span.tags['something'], nil)
+      assert_equal(span.tags['a_number'], '5')
     end
 
     def test_child_span_tags_nonstrings
@@ -111,9 +103,8 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.span_from_context(operation: 'op1', tags: tags,
-        trace_id: 5, parent_id: 10)
-      span = span.child_span(operation: 'op2', tags: tags)
+      span = c.start_span(operation: 'op1', tags: tags)
+      span = c.start_span(operation: 'op2', tags: tags, parent: span)
 
       assert_equal(span.tags["foo"], "bar")
       assert_equal(span.tags["something"], nil)

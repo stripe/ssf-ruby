@@ -2,8 +2,7 @@ require 'socket'
 
 module SSF
   class Client
-
-    DEFAULT_HOST = '127.0.0.1'
+    DEFAULT_HOST = '127.0.0.1'.freeze
     DEFAULT_PORT = 8128
 
     attr_reader :host
@@ -12,7 +11,8 @@ module SSF
     attr_reader :service
 
     def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: '', max_buffer_size: 50)
-      @host, @port = host, port
+      @host = host
+      @port = port
       @service = service
       @socket = connect_to_socket(host, port)
     end
@@ -27,69 +27,40 @@ module SSF
       @socket.send(message, 0)
     end
 
-    def new_root_span(operation: '', tags: {})
-      span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = span_id
-      start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
-
-      span = Ssf::SSFSpan.new({
-        id: span_id,
-        trace_id: trace_id,
-        start_timestamp: start,
-        service: service,
-        operation: operation,
-        tags: tags,
-      })
-      span.client = self
-      span
+    def start_span(operation: '', tags: {}, parent: nil)
+      if parent
+        new_tags = {}
+        parent.tags.each do |key, value|
+          if key != 'name'
+            new_tags[key] = value
+          end
+        end
+        new_tags = Ssf::SSFSpan.clean_tags(tags.merge(new_tags))
+        start_span_from_context(operation: operation, tags: new_tags, trace_id: parent.trace_id, parent_id: parent.id)
+      else
+        start_span_from_context(operation: operation, tags: tags)
+      end 
     end
-
-    def start_span(operation: '', tags: {}, parent: -1)
+    
+    def start_span_from_context(operation: '', tags: {}, trace_id: nil, parent_id: nil)
       span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = span_id
       start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
-
+      # the trace_id is set to span_id for root spans
       span = Ssf::SSFSpan.new({
         id: span_id,
-        trace_id: trace_id,
+        trace_id: span_id,
         start_timestamp: start,
-        service: service,
+        service: @service,
         operation: operation,
-        tags: tags,
-      })
+        tags: Ssf::SSFSpan.clean_tags(tags)
+        })
       span.client = self
-      if parent != -1
-        span.parent_id = parent
+      if trace_id != nil
+        span.trace_id = trace_id
       end
-      span
-    end
-
-    def span_from_context(operation: '', tags: {}, trace_id: -1, parent_id: -1)
-      span_id = SecureRandom.random_number(2**32 - 1)
-      trace_id = trace_id
-      start = Time.now.to_f * 1_000_000_000
-      service = @service
-      operation = operation
-      tags = tags
-
-      tags = Ssf::SSFSpan.clean_tags(tags)
-
-      span = Ssf::SSFSpan.new({
-        id: span_id,
-        trace_id: trace_id,
-        start_timestamp: start,
-        service: service,
-        operation: operation,
-        tags: tags,
-        parent_id: parent_id,
-      })
-      span.client = self
+      if parent_id != nil
+        span.parent_id = parent_id
+      end
       span
     end
   end
