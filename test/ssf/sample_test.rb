@@ -23,6 +23,14 @@ module SSFTest
       assert(s.id == s2.id)
     end
 
+    def test_set_tag
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+      s.set_tag('foo', 'bar')
+      assert_equal(s.tags['foo'], 'bar')
+    end
+
     def test_client_send
       s = Ssf::SSFSpan.new({
         id: 123456,

@@ -58,6 +58,10 @@ module Ssf
     end
 
 
+    def set_tag(name, value)
+      self.tags[name] = value
+    end
+
     def self.clean_tags(tags)
       tmp = {}
       tags.map do |k, v|
