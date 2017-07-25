@@ -31,6 +31,20 @@ module SSFTest
       assert_equal(s.tags['foo'], 'bar')
     end
 
+    def test_set_tags
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+      s.set_tag('foo', 'bar')
+
+      s.set_tags({
+        'foo' => 'gorch',
+        'fart' => 'eww',
+      })
+      assert_equal(s.tags['foo'], 'gorch')
+      assert_equal(s.tags['fart'], 'eww')
+    end
+
     def test_client_send
       s = Ssf::SSFSpan.new({
         id: 123456,
