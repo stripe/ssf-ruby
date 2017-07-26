@@ -58,6 +58,19 @@ module Ssf
     end
 
 
+    def set_tag(name, value)
+      if name.nil?
+        return
+      end
+      self.tags[name] = value
+    end
+
+    def set_tags(tags)
+      if tags.is_a?(Hash)
+        self.tags = self.tags.merge(tags)
+      end
+    end
+
     def self.clean_tags(tags)
       tmp = {}
       tags.map do |k, v|
