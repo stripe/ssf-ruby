@@ -59,6 +59,9 @@ module Ssf
 
 
     def set_tag(name, value)
+      if name.nil?
+        return
+      end
       self.tags[name] = value
     end
 

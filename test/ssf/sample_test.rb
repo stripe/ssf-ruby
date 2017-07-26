@@ -45,6 +45,19 @@ module SSFTest
       assert_equal(s.tags['fart'], 'eww')
     end
 
+    def test_set_tag_with_nils
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+      # We need to ensure that if someone accidentally passes a nill we
+      # don't blow up!
+      assert_nothing_raised do
+        s.set_tag(nil, nil)
+        s.set_tags(nil)
+      end
+
+    end
+
     def test_client_send
       s = Ssf::SSFSpan.new({
         id: 123456,
