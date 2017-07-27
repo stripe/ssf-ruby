@@ -62,12 +62,14 @@ module Ssf
       if name.nil?
         return
       end
-      self.tags[name] = value
+      self.tags[name.to_s] = value
     end
 
     def set_tags(tags)
       if tags.is_a?(Hash)
-        self.tags = self.tags.merge(tags)
+        tags.map do |k, v|
+          self.set_tag(k, v)
+        end
       end
     end
 
