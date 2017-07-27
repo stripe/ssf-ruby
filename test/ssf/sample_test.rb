@@ -49,9 +49,16 @@ module SSFTest
       s = Ssf::SSFSpan.new({
         id: 123456,
       })
+      # Make sure we stringify everything.
       assert_nothing_raised do
         s.set_tag(:foo, 'bar')
+        assert_equal(s.tags['foo'], 'bar')
+        s.set_tag('foo', :bar)
+        assert_equal(s.tags['foo'], 'bar')
         s.set_tags({ foo: 'bar' })
+        assert_equal(s.tags['foo'], 'bar')
+        s.set_tags({ 'foo' => :bar })
+        assert_equal(s.tags['foo'], 'bar')
       end
     end
 

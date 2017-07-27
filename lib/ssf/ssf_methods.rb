@@ -57,12 +57,11 @@ module Ssf
       self.tags['name'] = name
     end
 
-
     def set_tag(name, value)
       if name.nil?
         return
       end
-      self.tags[name.to_s] = value
+      self.tags[name.to_s] = value.to_s
     end
 
     def set_tags(tags)
