@@ -5,8 +5,8 @@ module SSF
       nil
     end
 
-    def send_to_socket(message)
-      puts("would have sent #{message}")
+    def send_to_socket(span)
+      puts("would have sent #{span}")
     end
   end
 end

@@ -81,9 +81,10 @@ module SSFTest
       })
 
       c = SSF::LocalBufferingClient.new()
-      c.send_to_socket(Ssf::SSFSpan.encode(s))
+      c.send_to_socket(s)
 
       assert_equal(1, c.buffer.length, 'Expected to find one span in client')
+      assert_equal(123456, c.buffer[0].id)
       c.reset
       assert_equal(0, c.buffer.length, 'Expected buffer to be cleared')
     end
@@ -94,7 +95,7 @@ module SSFTest
       })
 
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
-      c.send_to_socket(Ssf::SSFSpan.encode(s))
+      c.send_to_socket(s)
     end
 
     def test_full_client_send

@@ -16,9 +16,7 @@ module Ssf
         set_name(name)
       end
 
-      packet = Ssf::SSFSpan.encode(self)
-
-      @client.send_to_socket(packet)
+      @client.send_to_socket(self)
       self
     end
 
