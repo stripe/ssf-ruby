@@ -75,6 +75,17 @@ module SSFTest
 
     end
 
+    def test_local_buffer_send
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+
+      c = SSF::LocalBufferingClient.new()
+      c.send_to_socket(Ssf::SSFSpan.encode(s))
+
+      assert_equal(1, c.buffer.length, 'We got 1 span')
+    end
+
     def test_client_send
       s = Ssf::SSFSpan.new({
         id: 123456,
