@@ -75,6 +75,19 @@ module SSFTest
 
     end
 
+    def test_local_buffer_send
+      s = Ssf::SSFSpan.new({
+        id: 123456,
+      })
+
+      c = SSF::LocalBufferingClient.new()
+      c.send_to_socket(Ssf::SSFSpan.encode(s))
+
+      assert_equal(1, c.buffer.length, 'Expected to find one span in client')
+      c.reset
+      assert_equal(0, c.buffer.length, 'Expected buffer to be cleared')
+    end
+
     def test_client_send
       s = Ssf::SSFSpan.new({
         id: 123456,
@@ -90,8 +103,8 @@ module SSFTest
       span.finish
 
       assert(span.end_timestamp > span.start_timestamp)
-      assert_equal(name, 'test_full_client_send(SSFTest::SSFClientTest)')
-      assert_equal(span.service, 'test-srv')
+      assert_equal('test_full_client_send(SSFTest::SSFClientTest)', name)
+      assert_equal('test-srv', span.service)
     end
 
     def test_child_span
@@ -139,9 +152,9 @@ module SSFTest
       span = c.start_span(operation: 'op1',
                                 tags: tags)
 
-      assert_equal(span.tags['foo'], 'bar')
-      assert_equal(span.tags['something'], nil)
-      assert_equal(span.tags['a_number'], '5')
+      assert_equal('bar', span.tags['foo'])
+      assert_equal(nil, span.tags['something'])
+      assert_equal('5', span.tags['a_number'])
     end
 
     def test_child_span_tags_nonstrings

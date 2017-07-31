@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'ssf'
-  s.version = '0.0.4'
+  s.version = '0.0.5'
   s.required_ruby_version = '>= 1.9.3'
   s.summary = 'Ruby client for the Standard Sensor Format'
   s.description = 'Ruby client for the Standard Sensor Format'
