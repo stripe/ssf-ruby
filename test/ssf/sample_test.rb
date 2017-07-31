@@ -84,6 +84,8 @@ module SSFTest
       c.send_to_socket(Ssf::SSFSpan.encode(s))
 
       assert_equal(1, c.buffer.length, 'Expected to find one span in client')
+      c.reset
+      assert_equal(0, c.buffer.length, 'Expected buffer to be cleared')
     end
 
     def test_client_send

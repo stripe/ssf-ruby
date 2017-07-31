@@ -10,5 +10,9 @@ module SSF
     def send_to_socket(message)
       @buffer << message
     end
+
+    def reset
+      @buffer.clear
+    end
   end
 end
