@@ -24,7 +24,7 @@ module SSF
     end
 
     def send_to_socket(span)
-      message = Ssf::SSFSpan.encode(self)
+      message = Ssf::SSFSpan.encode(span)
 
       @socket.send(message, 0)
     end
