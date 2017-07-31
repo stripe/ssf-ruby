@@ -3,8 +3,9 @@ module SSF
 
     attr_reader :buffer
 
-    def initialize()
+    def initialize(service: '')
       @buffer = []
+      @service = service
     end
 
     def send_to_socket(message)
