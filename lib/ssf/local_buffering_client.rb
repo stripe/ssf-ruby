@@ -8,8 +8,8 @@ module SSF
       @service = service
     end
 
-    def send_to_socket(message)
-      @buffer << message
+    def send_to_socket(span)
+      @buffer << span
     end
 
     def reset

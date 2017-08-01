@@ -23,7 +23,9 @@ module SSF
       socket
     end
 
-    def send_to_socket(message)
+    def send_to_socket(span)
+      message = Ssf::SSFSpan.encode(span)
+
       @socket.send(message, 0)
     end
 
@@ -39,9 +41,9 @@ module SSF
         start_span_from_context(operation: operation, tags: new_tags, trace_id: parent.trace_id, parent_id: parent.id)
       else
         start_span_from_context(operation: operation, tags: tags)
-      end 
+      end
     end
-    
+
     def start_span_from_context(operation: '', tags: {}, trace_id: nil, parent_id: nil)
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
