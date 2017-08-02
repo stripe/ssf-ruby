@@ -85,6 +85,10 @@ module SSFTest
 
       assert_equal(1, c.buffer.length, 'Expected to find one span in client')
       assert_equal(123456, c.buffer[0].id)
+
+      c.send_to_socket(s)
+      assert_equal(2, c.buffer.length, 'Expected to find TWO spans in client')
+
       c.reset
       assert_equal(0, c.buffer.length, 'Expected buffer to be cleared')
     end
