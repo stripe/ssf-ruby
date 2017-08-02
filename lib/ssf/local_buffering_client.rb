@@ -9,7 +9,7 @@ module SSF
     end
 
     def send_to_socket(span)
-      @buffer << span
+      @buffer = @buffer << span
     end
 
     def reset
