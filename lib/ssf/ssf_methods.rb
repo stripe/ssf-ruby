@@ -10,22 +10,20 @@ module Ssf
       end
       self.end_timestamp = time.to_i
 
-      name = self.tags['name']
-      if name == nil || name == ''
-        name = caller_locations(1,1)[0].label
-        set_name(name)
+      if name.nil? || name == ''
+        self.name = caller_locations(1, 1)[0].label
       end
 
       @client.send_to_socket(self)
     end
 
-    def child_span(operation: '', tags: {})
+    def child_span(name: '', tags: {})
       puts "WARN: this method is deprecated."
       span_id = SecureRandom.random_number(2**32 - 1)
       trace_id = self.trace_id
       start = Time.now.to_f * 1_000_000_000
       service = self.service
-      operation = operation
+      name = name
       new_tags = {}
       self.tags.each do |key, value|
         if key != 'name'
@@ -42,16 +40,12 @@ module Ssf
         trace_id: trace_id,
         start_timestamp: start,
         service: service,
-        operation: operation,
+        name: name,
         tags: new_tags,
         parent_id: parent
       })
       span.client = self.client
       span
-    end
-
-    def set_name(name)
-      self.tags['name'] = name
     end
 
     def set_tag(name, value)
