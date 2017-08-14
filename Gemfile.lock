@@ -8,6 +8,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     google-protobuf (3.3.0)
+    metaclass (0.0.4)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
     power_assert (1.0.2)
     rake (12.0.0)
     test-unit (3.2.4)
@@ -18,9 +21,10 @@ PLATFORMS
 
 DEPENDENCIES
   google-protobuf (= 3.3.0)
+  mocha (= 1.1.0)
   rake
   ssf!
   test-unit
 
 BUNDLED WITH
-   1.15.2
+   1.15.3

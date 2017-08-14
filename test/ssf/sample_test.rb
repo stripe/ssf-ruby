@@ -1,8 +1,20 @@
+require 'mocha/test_unit'
 require 'test/unit'
 require 'ssf'
 require 'securerandom'
 
 module SSFTest
+  class FailingClient < SSF::Client
+
+    def connect_to_socket(host, port)
+      nil
+    end
+
+    def send_to_socket(span)
+      false
+    end
+  end
+
   class SSFClientTest < Test::Unit::TestCase
     def test_create_ssf
       s = Ssf::SSFSpan.new({
@@ -75,13 +87,35 @@ module SSFTest
 
     end
 
+    def test_failing_client
+      c = FailingClient.new(host: '127.0.01', port: '8128')
+      span = c.start_span(operation: 'run test')
+      result = span.finish
+
+      assert_false(result, "Failing client didn't fail")
+    end
+
+    def test_failing_udp_client
+      UDPSocket.any_instance.stubs(:send).raises(StandardError.new("explosion"))
+
+      c = SSF::Client.new(host: '127.0.01', port: '8128')
+      STDERR.puts(c.socket)
+      # c.socket = stub()
+      # c.socket.stubs(:send)
+      span = c.start_span(operation: 'run test')
+      result = span.finish
+
+      assert_false(result, "Failing client didn't fail")
+    end
+
     def test_local_buffer_send
       s = Ssf::SSFSpan.new({
         id: 123456,
       })
 
       c = SSF::LocalBufferingClient.new()
-      c.send_to_socket(s)
+      result = c.send_to_socket(s)
+      assert_true(result, "Local client didn't return true")
 
       assert_equal(1, c.buffer.length, 'Expected to find one span in client')
       assert_equal(123456, c.buffer[0].id)
@@ -95,13 +129,15 @@ module SSFTest
       })
 
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
-      c.send_to_socket(s)
+      result = c.send_to_socket(s)
+      assert_true(result, "Logging client didn't return true")
     end
 
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test')
-      span.finish
+      result = span.finish
+      assert_true(result, "Logging client didn't return true")
 
       assert(span.end_timestamp > span.start_timestamp)
       assert_equal('test_full_client_send(SSFTest::SSFClientTest)', name)

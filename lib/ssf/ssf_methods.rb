@@ -17,7 +17,6 @@ module Ssf
       end
 
       @client.send_to_socket(self)
-      self
     end
 
     def child_span(operation: '', tags: {})
