@@ -7,6 +7,7 @@ module SSF
 
     def send_to_socket(span)
       puts("would have sent #{span}")
+      true
     end
   end
 end

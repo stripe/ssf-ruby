@@ -9,6 +9,7 @@ module SSF
     attr_reader :port
 
     attr_reader :service
+    attr_reader :socket
 
     def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: '', max_buffer_size: 50)
       @host = host
@@ -26,7 +27,15 @@ module SSF
     def send_to_socket(span)
       message = Ssf::SSFSpan.encode(span)
 
-      @socket.send(message, 0)
+      begin
+        # Despite UDP being connectionless, some implementations — including
+        # ruby — will throw an exception if there's nothing listening. We will
+        # rescue it to avoid any problems for our client.
+        @socket.send(message, 0)
+        true
+      rescue StandardError
+        false
+      end
     end
 
     def start_span(operation: '', tags: {}, parent: nil)
