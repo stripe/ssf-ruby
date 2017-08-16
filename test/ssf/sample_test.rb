@@ -84,7 +84,7 @@ module SSFTest
 
     def test_failing_client
       c = FailingClient.new(host: '127.0.01', port: '8128')
-      span = c.start_span(operation: 'run test')
+      span = c.start_span(name: 'run test')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -94,7 +94,7 @@ module SSFTest
       UDPSocket.any_instance.stubs(:send).raises(StandardError.new("explosion"))
 
       c = SSF::Client.new(host: '127.0.01', port: '8128')
-      span = c.start_span(operation: 'run test')
+      span = c.start_span(name: 'run test')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -127,7 +127,7 @@ module SSFTest
 
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.start_span(operation: 'run test')
+      span = c.start_span(name: 'run test')
       result = span.finish
       assert(result, "Logging client didn't return true")
 
