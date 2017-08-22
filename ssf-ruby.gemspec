@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s|
   s.name = 'ssf'
-  s.version = '0.0.8'
+  s.version = '0.0.9'
   s.required_ruby_version = '>= 1.9.3'
   s.summary = 'Ruby client for the Simple Sensor Format'
   s.description = 'Ruby client for the Simple Sensor Format'
@@ -13,5 +13,8 @@ spec = Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- test/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
-  s.add_runtime_dependency 'google-protobuf', ["= 3.3.0"]
+  s.add_runtime_dependency 'google-protobuf', ['= 3.3.0']
+  s.add_runtime_dependency 'minitest', ['= 5.8.4']
+  s.add_runtime_dependency 'rake', ['= 10.2.2']
+  s.add_development_dependency 'mocha', ['= 1.1.0']
 end

@@ -1,5 +1,5 @@
-require 'mocha/test_unit'
-require 'test/unit'
+require 'mocha/mini_test'
+require 'minitest/autorun'
 require 'ssf'
 require 'securerandom'
 
@@ -15,7 +15,7 @@ module SSFTest
     end
   end
 
-  class SSFClientTest < Test::Unit::TestCase
+  class SSFClientTest < Minitest::Test
     def test_create_ssf
       s = Ssf::SSFSpan.new({
         id: 123456,
@@ -61,17 +61,15 @@ module SSFTest
       s = Ssf::SSFSpan.new({
         id: 123456,
       })
-      # Make sure we stringify everything.
-      assert_nothing_raised do
-        s.set_tag(:foo, 'bar')
-        assert_equal(s.tags['foo'], 'bar')
-        s.set_tag('foo', :bar)
-        assert_equal(s.tags['foo'], 'bar')
-        s.set_tags({ foo: 'bar' })
-        assert_equal(s.tags['foo'], 'bar')
-        s.set_tags({ 'foo' => :bar })
-        assert_equal(s.tags['foo'], 'bar')
-      end
+      # Make sure we stringify everything. If anything raises, we'll fail
+      s.set_tag(:foo, 'bar')
+      assert_equal(s.tags['foo'], 'bar')
+      s.set_tag('foo', :bar)
+      assert_equal(s.tags['foo'], 'bar')
+      s.set_tags({ foo: 'bar' })
+      assert_equal(s.tags['foo'], 'bar')
+      s.set_tags({ 'foo' => :bar })
+      assert_equal(s.tags['foo'], 'bar')
     end
 
     def test_set_tag_with_nils
@@ -79,12 +77,9 @@ module SSFTest
         id: 123456,
       })
       # We need to ensure that if someone accidentally passes a nill we
-      # don't blow up!
-      assert_nothing_raised do
-        s.set_tag(nil, nil)
-        s.set_tags(nil)
-      end
-
+      # don't blow up! Raising will fail.
+      s.set_tag(nil, nil)
+      s.set_tags(nil)
     end
 
     def test_failing_client
@@ -92,20 +87,17 @@ module SSFTest
       span = c.start_span(operation: 'run test')
       result = span.finish
 
-      assert_false(result, "Failing client didn't fail")
+      refute(result, "Failing client didn't fail")
     end
 
     def test_failing_udp_client
       UDPSocket.any_instance.stubs(:send).raises(StandardError.new("explosion"))
 
       c = SSF::Client.new(host: '127.0.01', port: '8128')
-      STDERR.puts(c.socket)
-      # c.socket = stub()
-      # c.socket.stubs(:send)
       span = c.start_span(operation: 'run test')
       result = span.finish
 
-      assert_false(result, "Failing client didn't fail")
+      refute(result, "Failing client didn't fail")
     end
 
     def test_local_buffer_send
@@ -115,7 +107,7 @@ module SSFTest
 
       c = SSF::LocalBufferingClient.new()
       result = c.send_to_socket(s)
-      assert_true(result, "Local client didn't return true")
+      assert(result, "Local client didn't return true")
 
       assert_equal(1, c.buffer.length, 'Expected to find one span in client')
       assert_equal(123456, c.buffer[0].id)
@@ -130,17 +122,17 @@ module SSFTest
 
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
       result = c.send_to_socket(s)
-      assert_true(result, "Logging client didn't return true")
+      assert(result, "Logging client didn't return true")
     end
 
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
       span = c.start_span(operation: 'run test')
       result = span.finish
-      assert_true(result, "Logging client didn't return true")
+      assert(result, "Logging client didn't return true")
 
       assert(span.end_timestamp > span.start_timestamp)
-      assert_equal('test_full_client_send(SSFTest::SSFClientTest)', name)
+      assert_equal('test_full_client_send', name)
       assert_equal('test-srv', span.service)
     end
 
