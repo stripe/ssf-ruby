@@ -3,8 +3,6 @@ PATH
   specs:
     ssf (0.0.9)
       google-protobuf (= 3.3.0)
-      minitest (= 5.8.4)
-      rake (= 10.2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -20,7 +18,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  minitest (= 5.8.4)
   mocha (= 1.1.0)
+  rake (= 10.2.2)
   ssf!
 
 BUNDLED WITH

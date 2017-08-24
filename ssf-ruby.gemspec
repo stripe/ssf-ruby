@@ -14,7 +14,7 @@ spec = Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
   s.add_runtime_dependency 'google-protobuf', ['= 3.3.0']
-  s.add_runtime_dependency 'minitest', ['= 5.8.4']
-  s.add_runtime_dependency 'rake', ['= 10.2.2']
+  s.add_development_dependency 'minitest', ['= 5.8.4']
+  s.add_development_dependency 'rake', ['= 10.2.2']
   s.add_development_dependency 'mocha', ['= 1.1.0']
 end
