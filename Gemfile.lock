@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ssf (0.0.8)
+    ssf (0.0.9)
       google-protobuf (= 3.3.0)
 
 GEM
@@ -9,22 +9,19 @@ GEM
   specs:
     google-protobuf (3.3.0)
     metaclass (0.0.4)
+    minitest (5.8.4)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
-    power_assert (1.0.2)
-    rake (12.0.0)
-    test-unit (3.2.4)
-      power_assert
+    rake (10.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  google-protobuf (= 3.3.0)
+  minitest (= 5.8.4)
   mocha (= 1.1.0)
-  rake
+  rake (= 10.2.2)
   ssf!
-  test-unit
 
 BUNDLED WITH
    1.15.3

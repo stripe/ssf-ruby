@@ -3,3 +3,4 @@ sample.proto
 *.swo
 *.swn
 pkg
+*.gem
