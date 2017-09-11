@@ -37,9 +37,13 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     optional :end_timestamp, :int64, 6
     optional :error, :bool, 7
     optional :service, :string, 8
-    optional :operation, :string, 9
     repeated :metrics, :message, 10, "ssf.SSFSample"
     map :tags, :string, :string, 11
+    optional :indicator, :bool, 12
+    optional :name, :string, 13
+  end
+  add_message "ssf.SSFSpanCollection" do
+    repeated :spans, :message, 1, "ssf.SSFSpan"
   end
 end
 
@@ -48,4 +52,5 @@ module Ssf
   SSFSample::Metric = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSample.Metric").enummodule
   SSFSample::Status = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSample.Status").enummodule
   SSFSpan = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSpan").msgclass
+  SSFSpanCollection = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSpanCollection").msgclass
 end
