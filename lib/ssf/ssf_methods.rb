@@ -10,8 +10,10 @@ module Ssf
       end
       self.end_timestamp = time.to_i
 
+      name = self.tags['name']
       if name.nil? || name == ''
-        self.name = caller_locations(1, 1)[0].label
+        name = caller_locations(1,1)[0].label
+        set_name(name)
       end
 
       @client.send_to_socket(self)
@@ -46,6 +48,10 @@ module Ssf
       })
       span.client = self.client
       span
+    end
+
+    def set_name(name)
+      self.tags['name'] = name
     end
 
     def set_tag(name, value)
