@@ -84,7 +84,7 @@ module SSFTest
 
     def test_failing_client
       c = FailingClient.new(host: '127.0.01', port: '8128')
-      span = c.start_span(name: 'run test')
+      span = c.start_span(operation: 'run test')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -94,7 +94,7 @@ module SSFTest
       UDPSocket.any_instance.stubs(:send).raises(StandardError.new("explosion"))
 
       c = SSF::Client.new(host: '127.0.01', port: '8128')
-      span = c.start_span(name: 'run test')
+      span = c.start_span(operation: 'run test')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -127,7 +127,7 @@ module SSFTest
 
     def test_full_client_send
       c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'run test')
+      span = c.start_span(operation: 'run test')
       result = span.finish
       assert(result, "Logging client didn't return true")
 
@@ -138,9 +138,9 @@ module SSFTest
 
     def test_child_span
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'op1', tags: {'tag1' => 'value1'})
+      span = c.start_span(operation: 'op1', tags: {'tag1' => 'value1'})
 
-      child1 = c.start_span(name: 'op2', tags: {'tag2' => 'value2'}, parent: span)
+      child1 = c.start_span(operation: 'op2', tags: {'tag2' => 'value2'}, parent: span)
 
       child1.finish
       span.finish
@@ -157,7 +157,7 @@ module SSFTest
 
     def test_from_context
       c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span_from_context(name: 'op1',
+      span = c.start_span_from_context(operation: 'op1',
                                 tags: { 'tag1' => 'value1' },
                                 trace_id: 5,
                                 parent_id: 10)
@@ -178,7 +178,7 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.start_span(name: 'op1',
+      span = c.start_span(operation: 'op1',
                                 tags: tags)
 
       assert_equal('bar', span.tags['foo'])
@@ -197,8 +197,8 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.start_span(name: 'op1', tags: tags)
-      span = c.start_span(name: 'op2', tags: tags, parent: span)
+      span = c.start_span(operation: 'op1', tags: tags)
+      span = c.start_span(operation: 'op2', tags: tags, parent: span)
 
       assert_equal(span.tags["foo"], "bar")
       assert_equal(span.tags["something"], nil)
