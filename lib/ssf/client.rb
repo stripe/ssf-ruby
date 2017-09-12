@@ -38,7 +38,7 @@ module SSF
       end
     end
 
-    def start_span(name: '', tags: {}, parent: nil)
+    def start_span(name: '', tags: {}, parent: nil, indicator: false)
       if parent
         new_tags = {}
         parent.tags.each do |key, value|
@@ -47,19 +47,20 @@ module SSF
           end
         end
         new_tags = Ssf::SSFSpan.clean_tags(tags.merge(new_tags))
-        start_span_from_context(name: name, tags: new_tags, trace_id: parent.trace_id, parent_id: parent.id)
+        start_span_from_context(name: name, tags: new_tags, trace_id: parent.trace_id, parent_id: parent.id, indicator: indicator)
       else
-        start_span_from_context(name: name, tags: tags)
+        start_span_from_context(name: name, tags: tags, indicator: indicator)
       end
     end
 
-    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil)
+    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false)
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
       # the trace_id is set to span_id for root spans
       span = Ssf::SSFSpan.new({
         id: span_id,
         trace_id: span_id,
+        indicator: indicator,
         start_timestamp: start,
         service: @service,
         name: name,
