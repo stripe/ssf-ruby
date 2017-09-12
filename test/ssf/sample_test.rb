@@ -204,5 +204,16 @@ module SSFTest
       assert_equal(span.tags["something"], nil)
       assert_equal(span.tags["a_number"], "5")
     end
+
+    def test_indicator_span
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+
+      indicator_span = c.start_span(name: 'op1', indicator: true)
+      not_indicator_span = c.start_span(name: 'op2', indicator: false)
+      default_span = c.start_span(name: 'op3')
+      assert_equal(true, indicator_span.indicator)
+      assert_equal(false, not_indicator_span.indicator)
+      assert_equal(false, default_span.indicator)
+    end
   end
 end
