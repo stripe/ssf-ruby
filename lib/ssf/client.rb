@@ -43,6 +43,7 @@ module SSF
       # as a result, I'm leaving it out of this function. If
       # the behavior here changes to where it's not always calling
       # start_span_from_context, this should be accounted for
+      tags = Ssf::SSFSpan.clean_tags(tags)
       if parent
         start_span_from_context(
           name: name,
@@ -50,17 +51,19 @@ module SSF
           trace_id: parent.trace_id,
           parent_id: parent.id,
           indicator: indicator,
+          clean_tags: false,
         )
       else
         start_span_from_context(
           name: name,
           tags: tags,
           indicator: indicator,
+          clean_tags: false,
         )
       end
     end
 
-    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false)
+    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false, clean_tags: true)
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
       # the trace_id is set to span_id for root spans
@@ -71,7 +74,7 @@ module SSF
         start_timestamp: start,
         service: @service,
         name: name,
-        tags: Ssf::SSFSpan.clean_tags(tags)
+        tags: Hash[clean_tags ? Ssf::SSFSpan.clean_tags(tags) : tags],
       })
       span.client = self
       if trace_id != nil
