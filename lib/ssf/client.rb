@@ -39,15 +39,11 @@ module SSF
     end
 
     def start_span(name: '', tags: {}, parent: nil, indicator: false)
-      # start_span_from_context calls clean_tags on the tags;
-      # as a result, I'm leaving it out of this function. If
-      # the behavior here changes to where it's not always calling
-      # start_span_from_context, this should be accounted for
       tags = Ssf::SSFSpan.clean_tags(tags)
       if parent
         start_span_from_context(
           name: name,
-          tags: parent.tags.merge(tags),
+          tags: Hash[parent.tags].merge!(tags),
           trace_id: parent.trace_id,
           parent_id: parent.id,
           indicator: indicator,
@@ -74,7 +70,7 @@ module SSF
         start_timestamp: start,
         service: @service,
         name: name,
-        tags: Hash[clean_tags ? Ssf::SSFSpan.clean_tags(tags) : tags],
+        tags: clean_tags ? Ssf::SSFSpan.clean_tags(tags) : tags,
       })
       span.client = self
       if trace_id != nil
