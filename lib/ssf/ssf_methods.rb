@@ -65,10 +65,8 @@ module Ssf
 
     def self.clean_tags(tags)
       tmp = {}
-      tags.map do |k, v|
-        if v && k != 'name'
-          tmp[k.to_s] = v.to_s
-        end
+      tags.each do |k, v|
+        tmp[k.to_s] = v.to_s unless v.nil?
       end
       tmp
     end

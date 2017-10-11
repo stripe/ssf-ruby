@@ -200,9 +200,9 @@ module SSFTest
       span = c.start_span(name: 'op1', tags: tags)
       span = c.start_span(name: 'op2', tags: tags, parent: span)
 
-      assert_equal(span.tags["foo"], "bar")
-      assert_equal(span.tags["something"], nil)
-      assert_equal(span.tags["a_number"], "5")
+      assert_equal("bar", span.tags["foo"])
+      assert_equal(nil, span.tags["something"])
+      assert_equal("5", span.tags["a_number"])
     end
 
     def test_indicator_span
