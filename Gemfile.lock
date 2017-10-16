@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    ssf (0.0.12)
-      google-protobuf (= 3.3.0)
+    ssf (0.0.13)
+      google-protobuf (~> 3.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    google-protobuf (3.3.0)
+    google-protobuf (3.3.0-universal-darwin)
     metaclass (0.0.4)
     minitest (5.8.4)
     mocha (1.1.0)
