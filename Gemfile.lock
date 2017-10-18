@@ -7,7 +7,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    google-protobuf (3.3.0-universal-darwin)
+    google-protobuf (3.3.0)
     metaclass (0.0.4)
     minitest (5.8.4)
     mocha (1.1.0)
