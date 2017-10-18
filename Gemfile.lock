@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    ssf (0.0.12)
-      google-protobuf (= 3.3.0)
+    ssf (0.0.13)
+      google-protobuf (~> 3.3)
 
 GEM
   remote: https://rubygems.org/
