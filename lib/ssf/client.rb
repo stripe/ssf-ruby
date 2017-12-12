@@ -11,7 +11,7 @@ module SSF
     attr_reader :service
     attr_reader :socket
 
-    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: '', max_buffer_size: 50)
+    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service:, max_buffer_size: 50)
       @host = host
       @port = port
       @service = service
