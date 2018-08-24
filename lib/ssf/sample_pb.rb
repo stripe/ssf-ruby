@@ -30,9 +30,9 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
   add_message "ssf.SSFSpan" do
     optional :version, :int32, 1
-    optional :trace_id, :int64, 2
-    optional :id, :int64, 3
-    optional :parent_id, :int64, 4
+    optional :trace_id, :uint64, 2
+    optional :id, :uint64, 3
+    optional :parent_id, :uint64, 4
     optional :start_timestamp, :int64, 5
     optional :end_timestamp, :int64, 6
     optional :error, :bool, 7
@@ -42,9 +42,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     optional :indicator, :bool, 12
     optional :name, :string, 13
   end
-  add_message "ssf.SSFSpanCollection" do
-    repeated :spans, :message, 1, "ssf.SSFSpan"
-  end
 end
 
 module Ssf
@@ -52,5 +49,4 @@ module Ssf
   SSFSample::Metric = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSample.Metric").enummodule
   SSFSample::Status = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSample.Status").enummodule
   SSFSpan = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSpan").msgclass
-  SSFSpanCollection = Google::Protobuf::DescriptorPool.generated_pool.lookup("ssf.SSFSpanCollection").msgclass
 end
