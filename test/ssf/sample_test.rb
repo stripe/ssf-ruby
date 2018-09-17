@@ -215,5 +215,20 @@ module SSFTest
       assert_equal(false, not_indicator_span.indicator)
       assert_equal(false, default_span.indicator)
     end
+
+    def test_start_span_service
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      span = c.start_span(name: 'op', override_service: 'override-srv')
+      assert_equal('override-srv', span.service)
+    end
+
+    def test_no_service
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
+
+      ex = assert_raises(ArgumentError) do
+        c.start_span(name: 'op')
+      end
+      assert_equal("You must either pass service to start_span_from_context or when you initialize the client", ex.message)
+    end
   end
 end

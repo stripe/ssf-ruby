@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'socket'
 
 module SSF
@@ -11,7 +12,7 @@ module SSF
     attr_reader :service
     attr_reader :socket
 
-    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service:, max_buffer_size: 50)
+    def initialize(host: DEFAULT_HOST, port: DEFAULT_PORT, service: nil, max_buffer_size: 50)
       @host = host
       @port = port
       @service = service
@@ -38,7 +39,7 @@ module SSF
       end
     end
 
-    def start_span(name: '', tags: {}, parent: nil, indicator: false)
+    def start_span(name: '', tags: {}, parent: nil, indicator: false, override_service: nil)
       tags = Ssf::SSFSpan.clean_tags(tags)
       if parent
         start_span_from_context(
@@ -48,6 +49,7 @@ module SSF
           parent_id: parent.id,
           indicator: indicator,
           clean_tags: false,
+          override_service: override_service
         )
       else
         start_span_from_context(
@@ -55,11 +57,17 @@ module SSF
           tags: tags,
           indicator: indicator,
           clean_tags: false,
+          override_service: override_service
         )
       end
     end
 
-    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false, clean_tags: true)
+    def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false, clean_tags: true, override_service: nil)
+      span_service = override_service || @service
+      unless span_service
+        raise ArgumentError.new("You must either pass service to start_span_from_context or when you initialize the client")
+      end
+
       span_id = SecureRandom.random_number(2**32 - 1)
       start = Time.now.to_f * 1_000_000_000
       # the trace_id is set to span_id for root spans
@@ -68,7 +76,7 @@ module SSF
         trace_id: span_id,
         indicator: indicator,
         start_timestamp: start,
-        service: @service,
+        service: span_service,
         name: name,
         tags: clean_tags ? Ssf::SSFSpan.clean_tags(tags) : tags,
       })
