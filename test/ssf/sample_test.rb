@@ -4,8 +4,7 @@ require 'ssf'
 require 'securerandom'
 
 module SSFTest
-  class FailingClient < SSF::Client
-
+  class FailingClient < SSF::BaseClient
     def connect_to_socket(host, port)
       nil
     end
@@ -83,8 +82,8 @@ module SSFTest
     end
 
     def test_failing_client
-      c = FailingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'run test')
+      c = FailingClient.new(host: '127.0.01', port: '8128')
+      span = c.start_span(name: 'run test', service: 'test-srv')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -93,8 +92,8 @@ module SSFTest
     def test_failing_udp_client
       UDPSocket.any_instance.stubs(:send).raises(StandardError.new("explosion"))
 
-      c = SSF::Client.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'run test')
+      c = SSF::BaseClient.new(host: '127.0.01', port: '8128')
+      span = c.start_span(name: 'run test', service: 'test-srv')
       result = span.finish
 
       refute(result, "Failing client didn't fail")
@@ -120,14 +119,14 @@ module SSFTest
         id: 123456,
       })
 
-      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
       result = c.send_to_socket(s)
       assert(result, "Logging client didn't return true")
     end
 
     def test_full_client_send
-      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'run test')
+      c = SSF::LoggingClient.new(host: '127.0.01', port: '8128')
+      span = c.start_span(name: 'run test', service: 'test-srv')
       result = span.finish
       assert(result, "Logging client didn't return true")
 
@@ -137,10 +136,10 @@ module SSFTest
     end
 
     def test_child_span
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
-      span = c.start_span(name: 'op1', tags: {'tag1' => 'value1'})
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
+      span = c.start_span(name: 'op1', tags: {'tag1' => 'value1'}, service: 'test-srv')
 
-      child1 = c.start_span(name: 'op2', tags: {'tag2' => 'value2'}, parent: span)
+      child1 = c.start_span(name: 'op2', tags: {'tag2' => 'value2'}, parent: span, service: 'test-srv')
 
       child1.finish
       span.finish
@@ -156,11 +155,12 @@ module SSFTest
     end
 
     def test_from_context
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
       span = c.start_span_from_context(name: 'op1',
                                 tags: { 'tag1' => 'value1' },
                                 trace_id: 5,
-                                parent_id: 10)
+                                parent_id: 10,
+                                service: 'test-srv')
 
       assert(span.trace_id == 5)
       assert(span.parent_id == 10)
@@ -170,7 +170,7 @@ module SSFTest
     def test_start_span_context_tags_nonstrings
       # we should be able to handle passing in keys and values for
       # 'tags' that are not strings without throwing an exception
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
 
       tags = {
         :foo => :bar,
@@ -178,9 +178,7 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.start_span(name: 'op1',
-                                tags: tags)
-
+      span = c.start_span(name: 'op1', tags: tags, service: 'test-srv')
       assert_equal('bar', span.tags['foo'])
       assert_equal(nil, span.tags['something'])
       assert_equal('5', span.tags['a_number'])
@@ -189,7 +187,7 @@ module SSFTest
     def test_child_span_tags_nonstrings
       # we should be able to handle passing in keys and values for
       # 'tags' that are not strings without throwing an exception
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
 
       tags = {
         :foo => :bar,
@@ -197,8 +195,8 @@ module SSFTest
         'a_number' => 5,
       }
 
-      span = c.start_span(name: 'op1', tags: tags)
-      span = c.start_span(name: 'op2', tags: tags, parent: span)
+      span = c.start_span(name: 'op1', tags: tags, service: 'test-srv')
+      span = c.start_span(name: 'op2', tags: tags, parent: span, service: 'test-srv')
 
       assert_equal("bar", span.tags["foo"])
       assert_equal(nil, span.tags["something"])
@@ -206,14 +204,30 @@ module SSFTest
     end
 
     def test_indicator_span
-      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+      c = SSF::LoggingClient.new(host: '127.0.0.1', port: '8128')
 
-      indicator_span = c.start_span(name: 'op1', indicator: true)
-      not_indicator_span = c.start_span(name: 'op2', indicator: false)
-      default_span = c.start_span(name: 'op3')
+      indicator_span = c.start_span(name: 'op1', indicator: true, service: 'test-srv')
+      not_indicator_span = c.start_span(name: 'op2', indicator: false, service: 'test-srv')
+      default_span = c.start_span(name: 'op3', service: 'test-srv')
       assert_equal(true, indicator_span.indicator)
       assert_equal(false, not_indicator_span.indicator)
       assert_equal(false, default_span.indicator)
+    end
+
+    def test_client_span
+      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+
+      span = c.start_span(name: 'op1')
+      assert_equal('test-srv', span.service)
+    end
+
+    def test_client_span_context
+      c = SSF::Client.new(host: '127.0.0.1', port: '8128', service: 'test-srv')
+
+      span = c.start_span_from_context(name: 'op1', trace_id: 5, parent_id: 10)
+      assert_equal(5, span.trace_id)
+      assert_equal(10, span.parent_id)
+      assert_equal('test-srv', span.service)
     end
   end
 end
