@@ -104,7 +104,7 @@ module SSFTest
         id: 123456,
       })
 
-      c = SSF::LocalBufferingClient.new()
+      c = SSF::LocalBufferingClient.new
       result = c.send_to_socket(s)
       assert(result, "Local client didn't return true")
 

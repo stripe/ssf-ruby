@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 module SSF
-  class LocalBufferingClient < Client
-
+  class LocalBufferingClient < BaseClient
     attr_reader :buffer
 
-    def initialize(service: '')
+    def initialize
       @buffer = []
-      @service = service
     end
 
     def send_to_socket(span)
