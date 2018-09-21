@@ -61,7 +61,7 @@ module SSF
     end
 
     def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false, clean_tags: true, service:)
-      span_id = SecureRandom.random_number(2**32 - 1)
+      span_id = SecureRandom.random_number(2**63 - 1)
       start = Time.now.to_f * 1_000_000_000
       # the trace_id is set to span_id for root spans
       span = Ssf::SSFSpan.new({
