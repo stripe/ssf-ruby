@@ -81,6 +81,13 @@ module SSFTest
       s.set_tags(nil)
     end
 
+    def test_set_tag_with_encoding
+      c = SSF::BaseClient.new(host: '127.0.01', port: '8128')
+      span = c.start_span(name: 'run test', service: 'test-srv', tags: {'hi' => "\xAD"})
+      span.set_tag('there', "\xAD")
+      span.child_span(name: 'hi this is dog', tags: {'this_is_dog' => "\xAD"})
+    end
+
     def test_failing_client
       c = FailingClient.new(host: '127.0.01', port: '8128')
       span = c.start_span(name: 'run test', service: 'test-srv')

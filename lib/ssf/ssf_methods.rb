@@ -53,7 +53,7 @@ module Ssf
       if name.nil?
         return
       end
-      self.tags[name.to_s] = value.to_s
+      self.tags[Ssf::SSFSpan.clean_string(name)] = Ssf::SSFSpan.clean_string(value)
     end
 
     def set_tags(tags)
@@ -67,9 +67,14 @@ module Ssf
     def self.clean_tags(tags)
       tmp = {}
       tags.each do |k, v|
-        tmp[k.to_s] = v.to_s unless v.nil?
+        tmp[clean_string(k)] = clean_string(v) unless v.nil?
       end
       tmp
+    end
+
+    def self.clean_string(str)
+      # assigning a non-utf8 string to a protobuf field will throw an exception
+      str.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace)
     end
   end
 end
