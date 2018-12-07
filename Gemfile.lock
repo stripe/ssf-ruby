@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ssf (0.0.17)
+    ssf (0.0.18)
       google-protobuf (~> 3.3)
 
 GEM
@@ -24,4 +24,4 @@ DEPENDENCIES
   ssf!
 
 BUNDLED WITH
-   1.16.2
+   1.17.1
