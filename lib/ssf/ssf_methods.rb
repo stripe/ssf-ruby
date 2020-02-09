@@ -7,7 +7,7 @@ module Ssf
 
     def finish(time: nil)
       unless time
-        time = Time.now.to_f * 1_000_000_000
+        time = Process.clock_gettime(Process::CLOCK_REALTIME) * 1_000_000_000
       end
       self.end_timestamp = time.to_i
 
