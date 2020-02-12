@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ssf (0.0.18)
+    ssf (0.0.19)
       google-protobuf (~> 3.3)
 
 GEM

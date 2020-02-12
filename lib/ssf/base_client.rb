@@ -60,9 +60,11 @@ module SSF
       end
     end
 
+    ID_MAX = 2**63 - 1
+
     def start_span_from_context(name: '', tags: {}, trace_id: nil, parent_id: nil, indicator: false, clean_tags: true, service:)
-      span_id = SecureRandom.random_number(2**63 - 1)
-      start = Time.now.to_f * 1_000_000_000
+      span_id = Random.rand(ID_MAX)
+      start = Process.clock_gettime(Process::CLOCK_REALTIME) * 1_000_000_000
       # the trace_id is set to span_id for root spans
       span = Ssf::SSFSpan.new({
         id: span_id,

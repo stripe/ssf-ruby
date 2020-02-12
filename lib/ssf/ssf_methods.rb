@@ -7,7 +7,7 @@ module Ssf
 
     def finish(time: nil)
       unless time
-        time = Time.now.to_f * 1_000_000_000
+        time = Process.clock_gettime(Process::CLOCK_REALTIME) * 1_000_000_000
       end
       self.end_timestamp = time.to_i
 
@@ -73,8 +73,13 @@ module Ssf
     end
 
     def self.clean_string(str)
-      # assigning a non-utf8 string to a protobuf field will throw an exception
-      str.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace)
+      str = str.to_s unless str.is_a?(String)
+      if str.encoding != Encoding::UTF_8 || !str.valid_encoding?
+        # assigning a non-utf8 string to a protobuf field will throw an exception
+        str.to_s.encode(Encoding::UTF_8, invalid: :replace, undef: :replace)
+      else
+        str
+      end
     end
   end
 end
