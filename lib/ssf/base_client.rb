@@ -42,7 +42,7 @@ module SSF
       if parent
         start_span_from_context(
           name: name,
-          tags: Hash[parent.tags].merge!(tags),
+          tags: parent.tags.to_h.merge!(tags),
           trace_id: parent.trace_id,
           parent_id: parent.id,
           indicator: indicator,
