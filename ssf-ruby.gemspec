@@ -15,6 +15,6 @@ spec = Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.add_runtime_dependency 'google-protobuf', ['~> 3.3']
   s.add_development_dependency 'minitest', ['= 5.8.4']
-  s.add_development_dependency 'rake', ['= 10.2.2']
+  s.add_development_dependency 'rake', '= 12.3.3'
   s.add_development_dependency 'mocha', ['= 1.1.0']
 end
